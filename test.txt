@@ -1,0 +1,49 @@
+BBLAYERS ?= " \
+  /work/pi3/poky/meta \
+  /work/pi3/poky/meta-poky \
+  /work/pi3/poky/meta-yocto-bsp \
+  /root/pi3/meta-raspberrypi \
+  /root/pi3/meta-openembedded/meta-oe \
+  /root/pi3/meta-openembedded/meta-multimedia \
+  /root/pi3/meta-openembedded/meta-networking \
+  /root/pi3/meta-openembedded/meta-python \
+  "
+
+docker run --device /dev/sdc -i -t pi3:latest /bin/bash
+docker build -t pi3:latest .
+docker run -it -v /mnt/work/yocto:/work pi3:latest /bin/bash
+bitbake core-image-base
+docker system prune: remove dangling images and stopped containers
+
+# RUN cd /mnt/work/yocto && \
+
+# These packages are not needed for the Yocto build but in this file below.
+# RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
+#     locales sudo
+
+# By default, Ubuntu uses dash as an alias for sh. Dash does not support the source command
+# needed for setting up Yocto build environments. Use bash as an alias for sh.
+# RUN which dash &> /dev/null && (\
+#     echo "dash dash/sh boolean false" | debconf-set-selections && \
+#     DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash) || \
+#     echo "Skipping dash reconfigure (not applicable)"
+
+# ENV USER_NAME vle
+# RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${USER_NAME} && \
+#     chmod 0440 /etc/sudoers.d/${USER_NAME}
+# ARG host_uid=1001
+# ARG host_gid=1001
+# RUN groupadd -g $host_gid $USER_NAME && useradd -g $host_gid -m -s /bin/bash -u $host_uid $USER_NAME
+
+
+# USER $USER_NAME
+# WORKDIR /work
+    # git clone -b morty https://github.com/meta-qt5/meta-qt5.git --depth=1 && \
+    # cd /mnt/work/yocto && \
+    # mkdir rpi && \
+    # cd rpi && \
+    # git clone -b morty git://github.com/jumpnow/meta-rpi --depth=1
+
+# COPY build.sh /mnt/work/yocto/build.sh
+
+# CMD ["/bin/bash", "/mnt/work/yocto/build.sh"]
